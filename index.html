@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MODPACK - ANDROID PERFORMANCE TOOLKIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg: #06090f;
+            --bg2: #0b1019;
+            --bg3: #111827;
+            --surface: rgba(17, 24, 39, 0.7);
+            --surface2: rgba(20, 28, 45, 0.5);
+            --border: rgba(148, 163, 184, 0.08);
+            --border2: rgba(148, 163, 184, 0.15);
+            --text: #f1f5f9;
+            --text2: #cbd5e1;
+            --text3: #94a3b8;
+            --accent: #60a5fa;
+            --accent2: #93c5fd;
+            --accent3: #3b82f6;
+            --gradient: linear-gradient(135deg, #93c5fd, #60a5fa, #3b82f6);
+            --gradient2: linear-gradient(135deg, #60a5fa, #2563eb);
+            --gradient3: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            --glow: 0 0 40px rgba(96, 165, 250, 0.15);
+            --glow2: 0 0 80px rgba(96, 165, 250, 0.2);
+            --radius: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg);
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            cursor: default;
+        }
+        .cursor { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; mix-blend-mode: screen; transition: transform 0.1s; }
+        .cursor-follower { width: 40px; height: 40px; border: 2px solid rgba(96,165,250,0.3); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.3s, width 0.3s, height 0.3s; }
+        .bg-animation { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .bg-orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.12; animation: orbFloat 20s infinite ease-in-out; }
+        .bg-orb:nth-child(1) { width: 600px; height: 600px; background: var(--accent3); top: -200px; left: -200px; animation-delay: 0s; }
+        .bg-orb:nth-child(2) { width: 500px; height: 500px; background: #6366f1; top: 50%; right: -200px; animation-delay: -7s; }
+        .bg-orb:nth-child(3) { width: 400px; height: 400px; background: #8b5cf6; bottom: -200px; left: 30%; animation-delay: -14s; }
+        @keyframes orbFloat { 0%,100%{transform:translate(0,0)scale(1)} 25%{transform:translate(60px,-40px)scale(1.1)} 50%{transform:translate(-30px,50px)scale(0.9)} 75%{transform:translate(-50px,-30px)scale(1.05)} }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 2; }
+        .navbar { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 48px); max-width: 1200px; background: rgba(11,16,25,0.7); backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%); border: 1px solid var(--border); border-radius: 20px; z-index: 1000; transition: var(--transition); }
+        .navbar.scrolled { background: rgba(11,16,25,0.9); box-shadow: 0 20px 60px rgba(0,0,0,0.5),var(--glow); border-color: var(--border2); }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; position: relative; }
+        .logo-icon { width: 44px; height: 44px; background: var(--gradient2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 22px; color: #fff; box-shadow: 0 8px 24px rgba(59,130,246,0.4); position: relative; overflow: hidden; }
+        .logo-icon::after { content: ''; position: absolute; inset: 0; background: linear-gradient(45deg,transparent 40%,rgba(255,255,255,0.2) 50%,transparent 60%); animation: shimmer 3s infinite; }
+        @keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+        .logo-text { font-size: 1.5rem; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
+        .nav-links { display: flex; gap: 6px; align-items: center; }
+        .nav-link { text-decoration: none; color: var(--text2); font-weight: 500; font-size: 0.85rem; padding: 10px 16px; border-radius: 12px; transition: var(--transition); position: relative; }
+        .nav-link:hover { color: #fff; background: rgba(96,165,250,0.1); }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 14px; font-weight: 600; font-size: 0.85rem; transition: var(--transition); cursor: pointer; text-decoration: none; border: none; position: relative; overflow: hidden; }
+        .btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent); transition: var(--transition); transform: translateX(-100%); }
+        .btn:hover::before { transform: translateX(100%); }
+        .btn-primary { background: var(--gradient2); color: #fff; box-shadow: 0 4px 20px rgba(59,130,246,0.4); font-weight: 700; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(59,130,246,0.6); }
+        .btn-outline { background: transparent; border: 2px solid rgba(96,165,250,0.3); color: var(--text); }
+        .btn-outline:hover { border-color: var(--accent); background: rgba(96,165,250,0.05); transform: translateY(-3px); }
+        .btn-lg { padding: 16px 36px; font-size: 1rem; border-radius: 16px; }
+        .btn-sm { padding: 10px 20px; font-size: 0.85rem; border-radius: 12px; }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.6rem; color: var(--text); cursor: pointer; }
+        .hero { text-align: center; padding: 160px 0 50px; position: relative; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(96,165,250,0.1); padding: 8px 20px; border-radius: 50px; font-size: 0.8rem; color: var(--accent2); margin-bottom: 32px; border: 1px solid rgba(96,165,250,0.2); animation: fadeInUp 0.8s ease; backdrop-filter: blur(10px); }
+        .hero-badge-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 12px #4ade80; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:0.5;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.3)} }
+        @keyframes fadeInUp { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+        .hero h1 { font-size: clamp(3.5rem,7vw,6rem); font-weight: 900; letter-spacing: -3px; margin-bottom: 20px; animation: fadeInUp 0.8s ease 0.1s backwards; line-height: 1; text-transform: uppercase; }
+        .hero-gradient { background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 30px rgba(96,165,250,0.3)); }
+        .hero h2 { font-size: clamp(1.3rem,2.5vw,1.8rem); font-weight: 500; color: var(--text2); margin-bottom: 24px; animation: fadeInUp 0.8s ease 0.2s backwards; text-transform: uppercase; }
+        .hero-desc { color: var(--text3); max-width: 650px; margin: 0 auto 40px; font-size: 1.05rem; line-height: 1.7; animation: fadeInUp 0.8s ease 0.3s backwards; }
+        .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; animation: fadeInUp 0.8s ease 0.4s backwards; }
+        .hero-stats { display: flex; gap: 40px; justify-content: center; margin-top: 60px; animation: fadeInUp 0.8s ease 0.5s backwards; }
+        .hero-stat { text-align: center; }
+        .hero-stat-number { font-size: 2rem; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text3); margin-top: 4px; }
+        .section-header { text-align: center; margin: 100px 0 50px; animation: fadeInUp 0.8s ease backwards; }
+        .section-label { font-size: 0.7rem; letter-spacing: 3px; background: rgba(96,165,250,0.1); display: inline-block; padding: 6px 16px; border-radius: 30px; color: var(--accent); margin-bottom: 16px; font-weight: 700; text-transform: uppercase; }
+        .section-title { font-size: clamp(1.8rem,4vw,2.8rem); font-weight: 800; letter-spacing: -1px; background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; }
+        .section-subtitle { color: var(--text3); margin-top: 12px; font-size: 1rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap: 24px; margin: 30px 0; }
+        .feature-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; transition: var(--transition); position: relative; overflow: hidden; backdrop-filter: blur(10px); animation: fadeInUp 0.6s ease backwards; }
+        .feature-card:nth-child(1){animation-delay:0.1s} .feature-card:nth-child(2){animation-delay:0.2s} .feature-card:nth-child(3){animation-delay:0.3s} .feature-card:nth-child(4){animation-delay:0.4s} .feature-card:nth-child(5){animation-delay:0.5s} .feature-card:nth-child(6){animation-delay:0.6s}
+        .feature-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--gradient); opacity: 0; transition: var(--transition); }
+        .feature-card:hover { transform: translateY(-8px); border-color: var(--border2); box-shadow: var(--glow2); }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-icon-wrap { width: 56px; height: 56px; background: rgba(96,165,250,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: var(--accent); margin-bottom: 24px; transition: var(--transition); position: relative; }
+        .feature-card:hover .feature-icon-wrap { background: rgba(96,165,250,0.2); transform: scale(1.1) rotate(-5deg); }
+        .feature-text h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; }
+        .feature-text p { color: var(--text3); font-size: 0.9rem; line-height: 1.6; }
+        .vip-type-tabs { display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
+        .vip-type-tab { padding: 12px 28px; border-radius: 14px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: var(--transition); border: 2px solid var(--border2); background: var(--surface); color: var(--text2); backdrop-filter: blur(10px); text-transform: uppercase; }
+        .vip-type-tab:hover { border-color: var(--accent); color: #fff; transform: translateY(-2px); }
+        .vip-type-tab.active { background: var(--gradient2); border-color: transparent; color: #fff; box-shadow: 0 8px 24px rgba(59,130,246,0.4); }
+        .vip-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap: 28px; margin: 30px 0; }
+        .vip-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px 32px; transition: var(--transition); text-align: center; position: relative; overflow: hidden; backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: center; }
+        .vip-card:hover { transform: translateY(-8px); border-color: var(--border2); box-shadow: var(--glow); }
+        .vip-card.featured { border: 2px solid var(--accent); background: rgba(59,130,246,0.08); box-shadow: var(--glow2); transform: scale(1.03); }
+        .vip-card.featured:hover { transform: scale(1.03) translateY(-8px); }
+        .vip-card.featured::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg,transparent,rgba(96,165,250,0.1),transparent,rgba(96,165,250,0.1),transparent); animation: rotate 6s linear infinite; opacity: 0.5; }
+        @keyframes rotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        .vip-badge { background: var(--gradient2); padding: 8px 20px; border-radius: 30px; font-size: 0.7rem; font-weight: 800; display: inline-block; margin-bottom: 24px; color: #fff; letter-spacing: 1px; text-transform: uppercase; animation: glowPulse 2s infinite; }
+        @keyframes glowPulse { 0%,100%{box-shadow:0 0 10px rgba(59,130,246,0.3)} 50%{box-shadow:0 0 25px rgba(59,130,246,0.6)} }
+        .vip-logo-wrap { width: 72px; height: 72px; background: var(--gradient2); border-radius: 22px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 10px 30px rgba(59,130,246,0.5); position: relative; overflow: hidden; }
+        .vip-logo-wrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(45deg,transparent 40%,rgba(255,255,255,0.25) 50%,transparent 60%); animation: shimmer 3s infinite; }
+        .vip-logo-wrap i { font-size: 2rem; color: #fff; position: relative; z-index: 1; }
+        .vip-name { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; }
+        .vip-price { font-size: 2.8rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin: 20px 0; }
+        .vip-features { list-style: none; text-align: left; margin: 24px 0; }
+        .vip-features li { font-size: 0.9rem; padding: 9px 0; display: flex; gap: 12px; align-items: center; color: var(--text2); }
+        .vip-features li::before { content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: var(--accent); font-size: 0.9rem; flex-shrink: 0; }
+        .vip-card .btn-outline { margin-top: auto; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-xl); padding: 40px 36px; max-width: 500px; width: 90%; text-align: center; box-shadow: var(--glow2); transform: scale(0.9) translateY(20px); transition: var(--transition); }
+        .modal-overlay.active .modal { transform: scale(1) translateY(0); }
+        .modal-logo { width: 72px; height: 72px; background: var(--gradient2); border-radius: 22px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 10px 30px rgba(59,130,246,0.5); }
+        .modal-logo i { font-size: 2rem; color: #fff; }
+        .modal h3 { font-size: 1.4rem; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
+        .modal .modal-product { color: var(--accent); font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; }
+        .modal .modal-price { font-size: 2.5rem; font-weight: 900; background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 28px; }
+        .seller-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+        .seller-btn { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; color: var(--text); text-decoration: none; transition: var(--transition); font-weight: 600; font-size: 0.9rem; }
+        .seller-btn:hover { border-color: var(--accent); background: rgba(96,165,250,0.08); transform: translateX(6px); box-shadow: var(--glow); }
+        .seller-avatar { width: 48px; height: 48px; background: var(--gradient2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: #fff; flex-shrink: 0; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+        .seller-info { flex: 1; text-align: left; }
+        .seller-name { font-weight: 700; font-size: 1rem; }
+        .seller-wa { font-size: 0.78rem; color: var(--text3); margin-top: 2px; }
+        .seller-arrow { color: #4ade80; font-size: 1.3rem; flex-shrink: 0; }
+        .modal-close { background: transparent; border: 2px solid var(--border2); color: var(--text2); padding: 12px 32px; border-radius: 14px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: var(--transition); text-transform: uppercase; }
+        .modal-close:hover { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.05); }
+        .partners-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap: 24px; margin: 30px 0; }
+        .partner-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px 32px; transition: var(--transition); text-align: center; backdrop-filter: blur(10px); display: flex; flex-direction: column; justify-content: center; }
+        .partner-card:hover { transform: translateY(-8px); border-color: var(--border2); box-shadow: var(--glow); }
+        .partner-avatar { width: 64px; height: 64px; background: var(--gradient2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; color: #fff; margin: 0 auto 20px; box-shadow: 0 8px 24px rgba(59,130,246,0.4); }
+        .partner-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; }
+        .partner-role { color: var(--accent); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .partner-desc { color: var(--text3); font-size: 0.9rem; margin-top: 12px; line-height: 1.6; }
+        .download-section { background: var(--surface); border-radius: var(--radius-xl); padding: 48px; margin: 60px 0; border: 1px solid var(--border); position: relative; overflow: hidden; backdrop-filter: blur(10px); }
+        .download-section::after { content: ''; position: absolute; top: -100px; right: -100px; width: 350px; height: 350px; background: radial-gradient(circle,rgba(96,165,250,0.1) 0%,transparent 70%); border-radius: 50%; pointer-events: none; }
+        .version-tag { background: rgba(96,165,250,0.15); display: inline-block; padding: 8px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: var(--accent2); letter-spacing: 1px; text-transform: uppercase; position: relative; z-index: 1; }
+        .download-title { font-size: 2rem; font-weight: 800; margin: 16px 0; text-transform: uppercase; position: relative; z-index: 1; }
+        .feature-list { margin: 20px 0; list-style: none; position: relative; z-index: 1; }
+        .feature-list li { margin: 10px 0; display: flex; align-items: center; gap: 10px; color: var(--text2); font-size: 0.95rem; }
+        .feature-list li::before { content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: var(--accent); font-size: 0.9rem; }
+        .notes-box { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border-left: 3px solid var(--accent); margin: 24px 0; font-size: 0.88rem; color: var(--text3); position: relative; z-index: 1; }
+        .notes-box strong { color: var(--accent2); }
+        .faq-list { max-width: 800px; margin: 0 auto 80px; }
+        .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 14px; cursor: pointer; transition: var(--transition); overflow: hidden; backdrop-filter: blur(10px); }
+        .faq-item:hover { border-color: var(--border2); }
+        .faq-item.active { border-color: var(--accent); box-shadow: var(--glow); }
+        .faq-question { padding: 22px 26px; font-weight: 600; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        .faq-icon { width: 30px; height: 30px; background: rgba(96,165,250,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: var(--transition); font-size: 0.8rem; color: var(--accent); }
+        .faq-item.active .faq-icon { transform: rotate(45deg); background: var(--accent); color: #fff; }
+        .faq-answer { max-height: 0; overflow: hidden; padding: 0 26px; color: var(--text3); font-size: 0.9rem; transition: all 0.5s ease; }
+        .faq-item.active .faq-answer { max-height: 250px; padding: 0 26px 22px; }
+        footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 60px 0 30px; margin-top: 80px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; margin-bottom: 40px; }
+        .footer-col h4 { color: var(--accent); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; font-weight: 700; }
+        .footer-col a { display: block; color: var(--text3); text-decoration: none; padding: 6px 0; font-size: 0.9rem; transition: var(--transition); }
+        .footer-col a:hover { color: var(--accent2); padding-left: 8px; }
+        .social-links { display: flex; gap: 12px; margin-top: 20px; }
+        .social-link { width: 42px; height: 42px; background: rgba(96,165,250,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent2); text-decoration: none; transition: var(--transition); font-size: 1.1rem; }
+        .social-link:hover { background: var(--accent); color: #fff; transform: translateY(-4px); box-shadow: 0 8px 20px rgba(59,130,246,0.3); }
+        .copyright { text-align: center; padding-top: 30px; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text3); }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        @media (max-width:900px){ .nav-links{display:none} .mobile-menu-btn{display:block} .nav-links.active{display:flex;flex-direction:column;position:absolute;top:70px;left:16px;right:16px;background:rgba(11,16,25,0.95);border-radius:20px;padding:20px;border:1px solid var(--border);backdrop-filter:blur(30px)} .hero{padding-top:120px} .hero h1{font-size:2.8rem} .hero-stats{flex-wrap:wrap;gap:20px} .features-grid{grid-template-columns:1fr} .vip-grid{grid-template-columns:1fr;max-width:420px;margin:30px auto} .vip-card.featured{transform:scale(1)} .vip-card.featured:hover{transform:scale(1) translateY(-8px)} .partners-grid{grid-template-columns:1fr;max-width:420px;margin:30px auto} .footer-grid{grid-template-columns:1fr;text-align:center;gap:30px} .social-links{justify-content:center} .download-section{padding:28px} .cursor,.cursor-follower{display:none} }
+        @media (max-width:600px){ .container{padding:0 16px} .modal{padding:28px 20px} }
+    </style>
+</head>
+<body>
+
+<div class="bg-animation"><div class="bg-orb"></div><div class="bg-orb"></div><div class="bg-orb"></div></div>
+<div class="cursor"></div><div class="cursor-follower"></div>
+
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal">
+        <div class="modal-logo"><i class="fas fa-shopping-cart"></i></div>
+        <h3>KONFIRMASI PEMBELIAN</h3>
+        <p class="modal-product" id="modalProduct"></p>
+        <p class="modal-price" id="modalPrice"></p>
+        <p style="color:var(--text3);margin-bottom:20px;font-size:0.9rem;">Pilih penjual untuk melanjutkan pembelian</p>
+        <div class="seller-list" id="sellerList"></div>
+        <button class="modal-close" id="modalClose">BATAL</button>
+    </div>
+</div>
+
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="#" class="logo"><div class="logo-icon">M</div><span class="logo-text">MODPACK</span></a>
+        <button class="mobile-menu-btn" id="mobileBtn"><i class="fas fa-bars"></i></button>
+        <div class="nav-links" id="navLinks">
+            <a href="#features" class="nav-link">Features</a><a href="#vip" class="nav-link">VIP</a><a href="#download" class="nav-link">Download</a><a href="#partners" class="nav-link">Partners</a><a href="#faq" class="nav-link">FAQ</a>
+            <a href="#" id="navDownloadBtn" class="btn btn-primary btn-sm"><i class="fas fa-download"></i> Download</a>
+        </div>
+    </div>
+</nav>
+
+<main><div class="container">
+    <section class="hero">
+        <div class="hero-badge"><span class="hero-badge-dot"></span> <span id="heroSubtitle">#1 ANDROID TOOLKIT 2026</span></div>
+        <h1><span class="hero-gradient">MODPACK</span></h1>
+        <h2 id="heroTitle">UNLOCK YOUR DEVICE'S FULL POTENTIAL</h2>
+        <p class="hero-desc" id="heroDesc">Toolkit performa android paling lengkap dengan teknologi optimasi terbaru gaming lebih lancar sistem lebih ringan kontrol lebih presisi</p>
+        <div class="hero-buttons">
+            <a href="#" id="heroDownloadBtn" class="btn btn-primary btn-lg"><i class="fas fa-download"></i> Download Gratis</a>
+            <a href="#" id="heroWABtn" class="btn btn-outline btn-lg"><i class="fab fa-whatsapp"></i> Join Channel</a>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat"><div class="hero-stat-number" id="statDownloads">1,248</div><div class="hero-stat-label">DOWNLOADS</div></div>
+            <div class="hero-stat"><div class="hero-stat-number" id="statActive">-</div><div class="hero-stat-label">ACTIVE NOW</div></div>
+            <div class="hero-stat"><div class="hero-stat-number" id="statDevices">60+</div><div class="hero-stat-label">DEVICES</div></div>
+            <div class="hero-stat"><div class="hero-stat-number" id="statVersion">4.0</div><div class="hero-stat-label">VERSION</div></div>
+        </div>
+    </section>
+
+    <section id="features" class="reveal"><div class="section-header"><div class="section-label">CORE FEATURES</div><h2 class="section-title">EVERYTHING YOU NEED</h2><p class="section-subtitle">Fitur lengkap untuk mengoptimalkan performa android anda</p></div><div class="features-grid" id="featuresGrid"></div></section>
+    <section id="vip" class="reveal"><div class="section-header"><div class="section-label">PREMIUM PRODUCTS</div><h2 class="section-title">MODPACK VIP SERIES</h2><p class="section-subtitle">Pilih produk premium sesuai kebutuhan anda</p></div><div class="vip-type-tabs"><button class="vip-type-tab active" data-type="headshot">FILES HEADSHOT</button><button class="vip-type-tab" data-type="tools">APLIKASI TOOLS & INJECT</button></div><div class="vip-grid" id="vipGrid"></div></section>
+    <section id="partners" class="reveal"><div class="section-header"><div class="section-label">OUR TEAM</div><h2 class="section-title">PARTNERS & COLLABORATORS</h2><p class="section-subtitle">Orang-orang hebat di balik pengembangan modpack</p></div><div class="partners-grid" id="partnersGrid"></div></section>
+    <section id="download" class="download-section reveal"><div class="version-tag">LATEST RELEASE</div><div class="download-title" id="toolTitle">MDTOOLS V3.1.0</div><ul class="feature-list" id="toolFeatures"></ul><div class="notes-box" id="toolNotes"></div><a href="#" id="directDownload" class="btn btn-primary btn-lg"><i class="fas fa-cloud-download-alt"></i> Download MDTOOLS</a></section>
+    <section id="faq" class="reveal"><div class="section-header"><div class="section-label">HELP CENTER</div><h2 class="section-title">FREQUENTLY ASKED QUESTIONS</h2><p class="section-subtitle">Pertanyaan yang sering diajukan oleh pengguna</p></div><div class="faq-list" id="faqList"></div></section>
+</div></main>
+
+<footer><div class="container">
+    <div class="footer-grid">
+        <div class="footer-col"><div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;"><div class="logo-icon" style="width:40px;height:40px;font-size:18px;">M</div><span class="logo-text" style="font-size:1.3rem;">MODPACK</span></div><p style="color:var(--text3);font-size:0.9rem;line-height:1.6;">Android performance toolkit terpercaya optimalkan device anda dengan tools profesional</p><div class="social-links"><a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a><a href="#" class="social-link"><i class="fab fa-discord"></i></a><a href="#" class="social-link"><i class="fab fa-telegram"></i></a><a href="#" class="social-link"><i class="fab fa-youtube"></i></a></div></div>
+        <div class="footer-col"><h4>Links</h4><a href="#">Home</a><a href="#features">Features</a><a href="#vip">VIP Series</a><a href="#download">Download</a><a href="#partners">Partners</a></div>
+        <div class="footer-col"><h4>Support</h4><a href="#faq">FAQ</a><a href="#">Documentation</a><a href="#">Community</a><a href="#">Contact Us</a><a href="#">Privacy Policy</a></div>
+    </div>
+    <div class="copyright">2025 MODPACK All rights reserved Made with love for android community</div>
+</div></footer>
+
+<script>
+    // ============ ACTIVE NOW TRACKING ============
+    function updateActiveNow() {
+        let visitors = JSON.parse(localStorage.getItem('modpack_visitors') || '[]');
+        const now = Date.now();
+        const fiveMin = 5 * 60 * 1000;
+        visitors.push(now);
+        visitors = visitors.filter(t => now - t < fiveMin);
+        localStorage.setItem('modpack_visitors', JSON.stringify(visitors));
+        return visitors.length;
+    }
+
+    function getActiveNow() {
+        const visitors = JSON.parse(localStorage.getItem('modpack_visitors') || '[]');
+        const now = Date.now();
+        const fiveMin = 5 * 60 * 1000;
+        const active = visitors.filter(t => now - t < fiveMin);
+        localStorage.setItem('modpack_visitors', JSON.stringify(active));
+        return active.length;
+    }
+
+    // Update setiap 10 detik
+    const activeCount = updateActiveNow();
+    document.getElementById('statActive').textContent = activeCount;
+    setInterval(() => {
+        document.getElementById('statActive').textContent = getActiveNow();
+    }, 10000);
+
+    // ============ DATA ============
+    function getAdminData(key, fallback) {
+        try { const saved = localStorage.getItem('admin_' + key); return saved ? JSON.parse(saved) : fallback; }
+        catch(e) { return fallback; }
+    }
+
+    const defaultVipData = {
+        headshot:{products:[{name:"FILES BASIC",price:"15K",icon:"fa-file",features:["Headshot assist","Head tracking","Drag control","Recoil stabilizer"],featured:false},{name:"FILES LITE",price:"30K",icon:"fa-file-alt",features:["Headshot assist","Head tracking","Drag control","Recoil stabilizer"],featured:false},{name:"FILES MEDIUM",price:"45K",icon:"fa-file-powerpoint",features:["Headshot assist","Head tracking","Drag control","Recoil stabilizer","Ultra boost"],featured:true},{name:"FILES MAX",price:"80K",icon:"fa-crown",features:["Headshot assist","Head tracking","Drag control","Recoil stabilizer","All feature max"],featured:false}]},
+        tools:{products:[{name:"TOOLS BASIC",price:"20K",icon:"fa-toolbox",features:["Basic injector","Auto aim assist","ESP basic"],featured:false},{name:"TOOLS LITE",price:"40K",icon:"fa-screwdriver-wrench",features:["Pro injector","Aimbot pro","ESP full","Wallhack"],featured:false},{name:"TOOLS MEDIUM",price:"60K",icon:"fa-gears",features:["Ultimate injector","Aimbot max","ESP premium","Wallhack","Speed hack"],featured:true},{name:"TOOLS MAX",price:"100K",icon:"fa-gem",features:["Legend injector","All features","Anti-ban system","24/7 support"],featured:false}]}
+    };
+    const defaultFeatures = [{icon:"fa-gauge-high",title:"PERFORMANCE BOOST",desc:"Tingkatkan performa sistem dan kurangi lag untuk pengalaman gaming yang lebih mulus"},{icon:"fa-maximize",title:"RESOLUTION CONTROL",desc:"Atur resolusi layar secara presisi untuk responsivitas lebih baik dan hemat baterai"},{icon:"fa-chart-line",title:"FPS STABILIZER",desc:"Stabilkan frame rate dan unlock fps tinggi untuk gameplay tanpa gangguan"},{icon:"fa-terminal",title:"SHELL COMMAND",desc:"Akses shell command dengan interface yang aman powerful dan mudah digunakan"},{icon:"fa-battery-full",title:"BATTERY OPTIMIZER",desc:"Optimalkan background process dan perpanjang masa pakai baterai secara signifikan"},{icon:"fa-broom",title:"SMART CLEANER",desc:"Bersihkan junk files cache dan temporary data untuk storage yang lebih lega"}];
+    const defaultPartners = [{name:"RIFZX",role:"Founder / CEO",desc:"Sebagai pendiri dan ceo modpack rifzx memimpin pengembangan project serta menentukan arah strategis dan inovasi ke depan"},{name:"ZEI",role:"Resource Provider",desc:"Zei bertanggung jawab menyediakan berbagai resource kebutuhan pengembangan mulai dari server tools hingga aset pendukung"},{name:"DAPONGSWB!!¹⁶",role:"Developer",desc:"Dapongswb adalah developer yang fokus pada pengembangan tools dan memastikan semua fitur berjalan optimal untuk pengguna"}];
+    const defaultFaq = [{q:"Apakah aplikasi ini aman",a:"100% aman modpack tidak mengumpulkan data pribadi pengguna dan semua operasi dilakukan secara transparan"},{q:"Perlu root untuk menggunakan modpack",a:"Tidak sebagian besar fitur dapat berjalan tanpa root disarankan menggunakan shizuku untuk android 10+ agar fitur lebih optimal"},{q:"Kenapa beberapa fitur tidak bekerja",a:"Hal ini bisa disebabkan oleh batasan perangkat atau versi android yang digunakan silakan cek halaman kompatibilitas untuk informasi lebih detail"},{q:"Apakah shizuku wajib digunakan",a:"Untuk android 10 ke atas shizuku sangat direkomendasikan agar semua fitur dapat berjalan optimal tanpa shizuku beberapa fitur tetap bisa digunakan"}];
+    const defaultSellers = [{name:"Rifzx",wa:"6285166682401"},{name:"Clift",wa:"628174934878"},{name:"DapongSWB!!¹⁶",wa:"6285876596372"}];
+    const defaultSettings = {heroTitle:"UNLOCK YOUR DEVICE'S FULL POTENTIAL",heroSubtitle:"#1 ANDROID TOOLKIT 2026",heroDesc:"Toolkit performa android paling lengkap dengan teknologi optimasi terbaru gaming lebih lancar sistem lebih ringan kontrol lebih presisi",devices:"60+",version:"4.0",downloads:1248,waChannel:"https://whatsapp.com/channel/0029VbCh32o4o7qL4EF0OJ2X"};
+    const defaultMdtools = {name:"MDTOOLS V3.1.0",link:"https://safefileku.com/download/XhWa3g0yG3VnxKxu",features:["Balanced & competitive mode","Sensitivity tuning pro","Max performance mode","Support all android versions"],notes:"Android 10+ wajib mengaktifkan shizuku<br>Fitur dapat bervariasi tergantung device & versi android<br>Akan muncul notifikasi tidak support jika fitur tidak kompatibel"};
+
+    const vipData = getAdminData('vipData', defaultVipData);
+    const featuresData = getAdminData('features', defaultFeatures);
+    const partnersData = getAdminData('partners', defaultPartners);
+    const faqData = getAdminData('faq', defaultFaq);
+    const sellersData = getAdminData('sellers', defaultSellers);
+    const settings = getAdminData('settings', defaultSettings);
+    const mdtoolsData = getAdminData('mdtools', defaultMdtools);
+
+    let currentVipType = 'headshot';
+    let downloadCount = parseInt(localStorage.getItem('modpackDownloads') || settings.downloads);
+
+    document.getElementById('heroTitle').textContent = settings.heroTitle;
+    document.getElementById('heroSubtitle').textContent = settings.heroSubtitle;
+    document.getElementById('heroDesc').textContent = settings.heroDesc;
+    document.getElementById('statDevices').textContent = settings.devices;
+    document.getElementById('statVersion').textContent = settings.version;
+    document.getElementById('statDownloads').textContent = downloadCount.toLocaleString();
+    document.getElementById('heroWABtn').href = settings.waChannel;
+    document.getElementById('sellerList').innerHTML = sellersData.map(s => `<a href="https://wa.me/${s.wa}" target="_blank" class="seller-btn"><div class="seller-avatar">${s.name[0]}</div><div class="seller-info"><div class="seller-name">${s.name}</div><div class="seller-wa">${s.wa}</div></div><i class="fab fa-whatsapp seller-arrow"></i></a>`).join('');
+    document.getElementById('featuresGrid').innerHTML = featuresData.map(f => `<div class="feature-card"><div class="feature-icon-wrap"><i class="fas ${f.icon}"></i></div><div class="feature-text"><h3>${f.title}</h3><p>${f.desc}</p></div></div>`).join('');
+
+    function renderVIP(type) {
+        const data = vipData[type];
+        if(!data||!data.products)return;
+        document.getElementById('vipGrid').innerHTML = data.products.map(p => `<div class="vip-card ${p.featured?'featured':''}">${p.featured?'<div class="vip-badge">BEST VALUE</div>':''}<div class="vip-logo-wrap"><i class="fas ${p.icon}"></i></div><div class="vip-name">${p.name}</div><div class="vip-price">Rp ${p.price}</div><ul class="vip-features">${p.features.map(f=>`<li>${f}</li>`).join('')}</ul><button class="btn btn-outline btn-sm vip-order-btn" data-name="${p.name}" data-price="${p.price}" style="width:100%;justify-content:center;">Pilih Paket</button></div>`).join('');
+        document.querySelectorAll('.vip-order-btn').forEach(btn=>{btn.addEventListener('click',function(){openModal(this.dataset.name,this.dataset.price);});});
+    }
+    renderVIP(currentVipType);
+    document.getElementById('partnersGrid').innerHTML = partnersData.map(p => `<div class="partner-card"><div class="partner-avatar">${p.name[0]}</div><div class="partner-name">${p.name}</div><div class="partner-role">${p.role}</div><p class="partner-desc">${p.desc}</p></div>`).join('');
+
+    const faqC = document.getElementById('faqList'); faqC.innerHTML = '';
+    faqData.forEach(item=>{const d=document.createElement('div');d.className='faq-item';d.innerHTML=`<div class="faq-question"><span>${item.q}</span><div class="faq-icon"><i class="fas fa-plus"></i></div></div><div class="faq-answer">${item.a}</div>`;d.addEventListener('click',()=>{const a=faqC.querySelector('.faq-item.active');if(a&&a!==d)a.classList.remove('active');d.classList.toggle('active');});faqC.appendChild(d);});
+
+    document.getElementById('toolTitle').textContent = mdtoolsData.name;
+    document.getElementById('toolFeatures').innerHTML = mdtoolsData.features.map(f=>`<li>${f}</li>`).join('');
+    document.getElementById('toolNotes').innerHTML = '<strong>NOTES</strong><br>'+mdtoolsData.notes.replace(/\n/g,'<br>');
+
+    function handleDownload(e){e.preventDefault();downloadCount++;localStorage.setItem('modpackDownloads',downloadCount);document.getElementById('statDownloads').textContent=downloadCount.toLocaleString();const b=e.target.closest('.btn');if(b){b.style.transform='scale(0.95)';setTimeout(()=>b.style.transform='',200);}setTimeout(()=>window.open(mdtoolsData.link,'_blank'),300);}
+
+    const modal=document.getElementById('confirmModal');
+    function openModal(n,p){document.getElementById('modalProduct').textContent='MODPACK '+n;document.getElementById('modalPrice').textContent='Rp '+p;modal.classList.add('active');document.body.style.overflow='hidden';}
+    document.getElementById('modalClose').addEventListener('click',()=>{modal.classList.remove('active');document.body.style.overflow='';});
+    modal.addEventListener('click',(e)=>{if(e.target===modal){modal.classList.remove('active');document.body.style.overflow='';}});
+    document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){modal.classList.remove('active');document.body.style.overflow='';}});
+
+    document.querySelectorAll('.vip-type-tab').forEach(tab=>{tab.addEventListener('click',function(){document.querySelectorAll('.vip-type-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active');currentVipType=this.dataset.type;const g=document.getElementById('vipGrid');g.style.opacity='0';g.style.transform='translateY(20px)';setTimeout(()=>{renderVIP(currentVipType);g.style.opacity='1';g.style.transform='translateY(0)';g.style.transition='all 0.4s ease';},200);});});
+    document.getElementById('heroDownloadBtn').addEventListener('click',handleDownload);
+    document.getElementById('navDownloadBtn').addEventListener('click',handleDownload);
+    document.getElementById('directDownload').addEventListener('click',handleDownload);
+    document.getElementById('mobileBtn').addEventListener('click',()=>document.getElementById('navLinks').classList.toggle('active'));
+    document.querySelectorAll('.nav-link').forEach(l=>l.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('active')));
+    window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>30));
+
+    const cursor=document.querySelector('.cursor'),cursorFollower=document.querySelector('.cursor-follower');
+    let mX=0,mY=0,cX=0,cY=0;
+    document.addEventListener('mousemove',(e)=>{mX=e.clientX;mY=e.clientY;});
+    function animCursor(){cX+=(mX-cX)*0.5;cY+=(mY-cY)*0.5;cursor.style.left=mX-4+'px';cursor.style.top=mY-4+'px';cursorFollower.style.left=cX-20+'px';cursorFollower.style.top=cY-20+'px';requestAnimationFrame(animCursor);}
+    animCursor();
+    document.querySelectorAll('a,button,.btn,.faq-item,.vip-type-tab').forEach(el=>{el.addEventListener('mouseenter',()=>{cursorFollower.style.width='60px';cursorFollower.style.height='60px';cursorFollower.style.borderColor='rgba(96,165,250,0.6)';});el.addEventListener('mouseleave',()=>{cursorFollower.style.width='40px';cursorFollower.style.height='40px';cursorFollower.style.borderColor='rgba(96,165,250,0.3)';});});
+    const reveals=document.querySelectorAll('.reveal');const obs=new IntersectionObserver((e)=>{e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('active');});},{threshold:0.15});reveals.forEach(el=>obs.observe(el));
+</script>
+<!-- HIDDEN ADMIN BUTTON -->
+<div id="hiddenAdminBtn">
+    <i class="fas fa-user-shield"></i>
+</div>
+
+<style>
+#hiddenAdminBtn{
+    position:fixed;
+    bottom:15px;
+    right:15px;
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.02);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:transparent;
+    z-index:99999;
+    cursor:pointer;
+    user-select:none;
+    transition:0.3s;
+}
+
+#hiddenAdminBtn.show{
+    background:rgba(96,165,250,0.15);
+    color:#60a5fa;
+    box-shadow:0 0 20px rgba(96,165,250,0.4);
+}
+</style>
+
+<script>
+let adminTapCount = 0;
+let adminUnlocked = false;
+
+const hiddenBtn = document.getElementById("hiddenAdminBtn");
+
+hiddenBtn.addEventListener("click", () => {
+
+    adminTapCount++;
+
+    // Tekan 5x buat munculin tombol
+    if(adminTapCount >= 5 && !adminUnlocked){
+
+        adminUnlocked = true;
+
+        hiddenBtn.classList.add("show");
+
+        setTimeout(() => {
+            alert("Admin Mode Activated");
+        },100);
+
+    }
+
+    // Kalau udah aktif → buka admin
+    else if(adminUnlocked){
+
+        window.location.href = "admin.html";
+
+    }
+
+    // reset hitungan kalau kelamaan
+    setTimeout(() => {
+        adminTapCount = 0;
+    },3000);
+
+});
+</script>
+
+</body>
+</html>
