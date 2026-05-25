@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN DASHBOARD - MODPACK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg: #06090f;
+            --bg2: #0b1019;
+            --bg3: #111827;
+            --surface: rgba(17, 24, 39, 0.8);
+            --border: rgba(148, 163, 184, 0.1);
+            --border2: rgba(148, 163, 184, 0.2);
+            --text: #f1f5f9;
+            --text2: #cbd5e1;
+            --text3: #94a3b8;
+            --accent: #60a5fa;
+            --accent2: #93c5fd;
+            --gradient: linear-gradient(135deg, #60a5fa, #2563eb);
+            --gradient2: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            --danger: #ef4444;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --transition: 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); font-family: 'Inter', system-ui, sans-serif; color: var(--text); overflow: hidden; }
+
+        /* ============ LOGIN PAGE ============ */
+        .login-page {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; width: 100%; background: var(--bg);
+            position: relative; overflow: hidden;
+        }
+        .login-page::before {
+            content: ''; position: absolute; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+            top: -200px; left: -200px; border-radius: 50%; animation: orbFloat 15s infinite ease-in-out;
+        }
+        .login-page::after {
+            content: ''; position: absolute; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%);
+            bottom: -200px; right: -200px; border-radius: 50%; animation: orbFloat 18s infinite ease-in-out reverse;
+        }
+        @keyframes orbFloat {
+            0%,100%{transform:translate(0,0)scale(1)} 33%{transform:translate(40px,-30px)scale(1.1)} 66%{transform:translate(-30px,40px)scale(0.9)}
+        }
+        .login-container {
+            position: relative; z-index: 1; width: 440px;
+        }
+        .login-card {
+            background: rgba(17,24,39,0.8); border: 1px solid var(--border);
+            border-radius: 24px; padding: 48px 40px; backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(59,130,246,0.05);
+            animation: fadeInUp 0.6s ease;
+        }
+        @keyframes fadeInUp {
+            from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)}
+        }
+        .login-logo {
+            display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;
+        }
+        .login-logo-icon {
+            width: 52px; height: 52px; background: var(--gradient); border-radius: 16px;
+            display: flex; align-items: center; justify-content: center; font-weight: 900;
+            font-size: 24px; color: #fff; box-shadow: 0 8px 24px rgba(59,130,246,0.5);
+        }
+        .login-logo-text { font-size: 1.6rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .login-logo-text span { background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .login-subtitle { text-align: center; color: var(--text3); font-size: 0.9rem; margin-bottom: 32px; margin-top: 4px; }
+        .login-card .form-group { margin-bottom: 18px; }
+        .login-card .form-group label {
+            display: block; font-size: 0.75rem; font-weight: 700; color: var(--text2);
+            text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px;
+        }
+        .login-card .form-group .input-wrap {
+            position: relative; display: flex; align-items: center;
+        }
+        .login-card .form-group .input-wrap i {
+            position: absolute; left: 16px; color: var(--text3); font-size: 1rem;
+        }
+        .login-card .form-group input {
+            width: 100%; padding: 14px 16px 14px 44px; background: var(--bg3);
+            border: 2px solid var(--border); border-radius: 14px; color: var(--text);
+            font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: var(--transition);
+        }
+        .login-card .form-group input:focus {
+            border-color: var(--accent); box-shadow: 0 0 0 4px rgba(96,165,250,0.1);
+        }
+        .login-error {
+            color: var(--danger); font-size: 0.85rem; text-align: center; margin-top: 16px;
+            display: none; align-items: center; justify-content: center; gap: 8px;
+        }
+        .login-error.show { display: flex; }
+        .login-btn {
+            width: 100%; padding: 14px; background: var(--gradient); color: #fff;
+            border: none; border-radius: 14px; font-weight: 700; font-size: 1rem;
+            cursor: pointer; transition: var(--transition); display: flex; align-items: center;
+            justify-content: center; gap: 8px; margin-top: 8px;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.3);
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59,130,246,0.5); }
+
+        /* ============ DASHBOARD ============ */
+        #dashboardPage { display: none; }
+        .sidebar {
+            width: 280px; min-width: 280px; background: var(--bg2); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; height: 100vh; position: fixed; left: 0; top: 0; z-index: 100; overflow-y: auto;
+        }
+        .sidebar-logo { padding: 24px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        .sidebar-logo-icon { width: 40px; height: 40px; background: var(--gradient); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; color: #fff; }
+        .sidebar-logo-text { font-size: 1.2rem; font-weight: 800; color: #fff; }
+        .sidebar-logo-text span { color: var(--accent); }
+        .sidebar-nav { padding: 16px 12px; flex: 1; }
+        .sidebar-nav .nav-section { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text3); padding: 16px 12px 8px; font-weight: 700; }
+        .sidebar-nav .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius); cursor: pointer; transition: var(--transition); color: var(--text2); font-size: 0.88rem; font-weight: 500; margin-bottom: 2px; border: none; background: none; width: 100%; text-align: left; }
+        .sidebar-nav .nav-item:hover { background: rgba(96,165,250,0.08); color: #fff; }
+        .sidebar-nav .nav-item.active { background: rgba(96,165,250,0.15); color: var(--accent); font-weight: 600; box-shadow: inset 3px 0 0 var(--accent); }
+        .sidebar-nav .nav-item i { width: 20px; text-align: center; }
+        .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+        .sidebar-avatar { width: 36px; height: 36px; background: var(--gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #fff; }
+        .sidebar-user-info { flex: 1; }
+        .sidebar-user-name { font-size: 0.85rem; font-weight: 600; }
+        .sidebar-user-role { font-size: 0.7rem; color: var(--text3); }
+        .btn-logout { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text3); cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; }
+        .btn-logout:hover { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.05); }
+
+        .main { margin-left: 280px; flex: 1; overflow-y: auto; height: 100vh; padding: 28px 32px; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        .page-header { margin-bottom: 28px; }
+        .page-header h2 { font-size: 1.6rem; font-weight: 700; }
+        .page-header p { color: var(--text3); font-size: 0.88rem; margin-top: 4px; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; display: flex; align-items: center; gap: 16px; }
+        .stat-card-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+        .stat-card-icon.blue { background: rgba(96,165,250,0.15); color: var(--accent); }
+        .stat-card-icon.green { background: rgba(74,222,128,0.15); color: var(--success); }
+        .stat-card-icon.purple { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+        .stat-card-icon.orange { background: rgba(245,158,11,0.15); color: var(--warning); }
+        .stat-card-info h3 { font-size: 1.5rem; font-weight: 800; }
+        .stat-card-info p { font-size: 0.75rem; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 24px; overflow: hidden; }
+        .card-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .card-header h3 { font-size: 1rem; font-weight: 700; }
+        .card-body { padding: 20px; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 16px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); font-weight: 700; border-bottom: 1px solid var(--border); }
+        td { padding: 14px 16px; font-size: 0.88rem; border-bottom: 1px solid var(--border); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(96,165,250,0.03); }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .badge-blue { background: rgba(96,165,250,0.15); color: var(--accent); }
+        .badge-green { background: rgba(74,222,128,0.15); color: var(--success); }
+        .badge-red { background: rgba(239,68,68,0.15); color: var(--danger); }
+        .actions { display: flex; gap: 8px; }
+
+        .btn { padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: var(--transition); border: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-sm { padding: 6px 12px; font-size: 0.75rem; border-radius: 8px; }
+        .btn-primary { background: var(--gradient); color: #fff; }
+        .btn-primary:hover { box-shadow: 0 4px 20px rgba(59,130,246,0.4); transform: translateY(-1px); }
+        .btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
+        .btn-outline:hover { border-color: var(--accent); color: #fff; }
+        .btn-danger { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: var(--danger); }
+        .btn-danger:hover { background: rgba(239,68,68,0.1); }
+        .btn-warning { background: transparent; border: 1px solid rgba(245,158,11,0.3); color: var(--warning); }
+        .btn-warning:hover { background: rgba(245,158,11,0.1); }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.88rem; transition: var(--transition); outline: none; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(96,165,250,0.1); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 28px; max-width: 550px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .modal h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; }
+        .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+        /* CONFIRM MODAL */
+        .confirm-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .confirm-modal-overlay.active { opacity: 1; pointer-events: all; }
+        .confirm-modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px; padding: 36px 32px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.6); transform: scale(0.9); transition: var(--transition); }
+        .confirm-modal-overlay.active .confirm-modal { transform: scale(1); }
+        .confirm-modal-icon { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.8rem; }
+        .confirm-modal-icon.danger { background: rgba(239,68,68,0.15); color: var(--danger); }
+        .confirm-modal-icon.warning { background: rgba(245,158,11,0.15); color: var(--warning); }
+        .confirm-modal h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+        .confirm-modal p { color: var(--text3); font-size: 0.9rem; margin-bottom: 24px; }
+        .confirm-modal .btn-group { display: flex; gap: 10px; justify-content: center; }
+        .confirm-modal .btn-cancel { padding: 10px 24px; border-radius: 10px; background: transparent; border: 1px solid var(--border2); color: var(--text2); cursor: pointer; font-weight: 600; transition: var(--transition); }
+        .confirm-modal .btn-cancel:hover { border-color: #fff; color: #fff; }
+        .confirm-modal .btn-confirm-danger { padding: 10px 24px; border-radius: 10px; background: var(--danger); border: none; color: #fff; cursor: pointer; font-weight: 700; transition: var(--transition); }
+        .confirm-modal .btn-confirm-danger:hover { background: #dc2626; }
+
+        .toast { position: fixed; top: 20px; right: 20px; padding: 14px 20px; border-radius: 12px; font-weight: 600; font-size: 0.88rem; z-index: 400; animation: slideIn 0.3s ease; display: flex; align-items: center; gap: 8px; }
+        .toast.success { background: #065f46; color: #d1fae5; border: 1px solid #059669; }
+        .toast.error { background: #7f1d1d; color: #fecaca; border: 1px solid #dc2626; }
+        @keyframes slideIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+
+        .empty-state { text-align: center; padding: 40px; color: var(--text3); }
+    </style>
+</head>
+<body>
+
+<!-- ============ LOGIN PAGE ============ -->
+<div id="loginPage" class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="login-logo-icon">M</div>
+                <span class="login-logo-text">MOD<span>PACK</span></span>
+            </div>
+            <p class="login-subtitle">ADMIN DASHBOARD</p>
+            <div class="form-group">
+                <label>Username</label>
+                <div class="input-wrap">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="loginUsername" placeholder="Masukkan username" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrap">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="loginPassword" placeholder="Masukkan password">
+                </div>
+            </div>
+            <button class="login-btn" onclick="login()">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <div class="login-error" id="loginError">
+                <i class="fas fa-exclamation-circle"></i> Username atau password salah
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ DASHBOARD ============ -->
+<div id="dashboardPage">
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">M</div>
+            <span class="sidebar-logo-text">MOD<span>PACK</span></span>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">DASHBOARD</div>
+            <button class="nav-item active" data-page="overview"><i class="fas fa-th-large"></i> OVERVIEW</button>
+            <div class="nav-section">Produk</div>
+            <button class="nav-item" data-page="vip-files"><i class="fas fa-file"></i> VIP FILES HEADSHOT</button>
+            <button class="nav-item" data-page="vip-tools"><i class="fas fa-tools"></i> VIP TOOLS & INJECT</button>
+            <button class="nav-item" data-page="mdtools"><i class="fas fa-download"></i> FILES / TOOLS (FREE)</button>
+            <div class="nav-section">Konten</div>
+            <button class="nav-item" data-page="features"><i class="fas fa-star"></i> FEATURES SECTION</button>
+            <button class="nav-item" data-page="partners"><i class="fas fa-users"></i> PARTNERS / TEAM</button>
+            <button class="nav-item" data-page="faq"><i class="fas fa-question-circle"></i> FAQ</button>
+            <div class="nav-section">PENGATURAN</div>
+            <button class="nav-item" data-page="sellers"><i class="fas fa-user-tie"></i> PENJUAL</button>
+            <button class="nav-item" data-page="settings"><i class="fas fa-cog"></i> SETTINGS</button>
+            <button class="nav-item" data-page="admins"><i class="fas fa-shield-alt"></i> KELOLA ADMIN</button>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="sidebar-avatar" id="sidebarAvatar">R</div>
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-name" id="sidebarUsername">rifzx</div>
+                <div class="sidebar-user-role">Super Admin</div>
+            </div>
+            <button class="btn-logout" onclick="confirmLogout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </aside>
+    <div class="main">
+        <!-- OVERVIEW -->
+        <div class="page active" id="page-overview">
+            <div class="page-header"><h2>OVERVIEW</h2><p>Ringkasan data website modpack</p></div>
+            <div class="stats-row">
+                <div class="stat-card"><div class="stat-card-icon blue"><i class="fas fa-download"></i></div><div class="stat-card-info"><h3 id="ovDownloads">-</h3><p>Total downloads</p></div></div>
+                <div class="stat-card"><div class="stat-card-icon green"><i class="fas fa-circle"></i></div><div class="stat-card-info"><h3 id="ovActive">-</h3><p>Active now</p></div></div>
+                <div class="stat-card"><div class="stat-card-icon purple"><i class="fas fa-mobile-alt"></i></div><div class="stat-card-info"><h3 id="ovDevices">-</h3><p>Devices</p></div></div>
+                <div class="stat-card"><div class="stat-card-icon orange"><i class="fas fa-code-branch"></i></div><div class="stat-card-info"><h3 id="ovVersion">-</h3><p>Version</p></div></div>
+            </div>
+        </div>
+        <!-- VIP FILES -->
+        <div class="page" id="page-vip-files">
+            <div class="page-header"><h2>VIP FILES HEADSHOT</h2><p>Kelola produk files headshot</p></div>
+            <div class="card"><div class="card-header"><h3>Daftar produk</h3><button class="btn btn-primary btn-sm" onclick="openVipModal('headshot',null)"><i class="fas fa-plus"></i> Tambah</button></div><div class="card-body"><table><thead><tr><th>Nama</th><th>Harga</th><th>Fitur</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="vipFilesTable"></tbody></table></div></div>
+        </div>
+        <!-- VIP TOOLS -->
+        <div class="page" id="page-vip-tools">
+            <div class="page-header"><h2>VIP TOOLS & INJECT</h2><p>Kelola produk tools & inject</p></div>
+            <div class="card"><div class="card-header"><h3>Daftar Produk</h3><button class="btn btn-primary btn-sm" onclick="openVipModal('tools',null)"><i class="fas fa-plus"></i> Tambah</button></div><div class="card-body"><table><thead><tr><th>Nama</th><th>Harga</th><th>Fitur</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="vipToolsTable"></tbody></table></div></div>
+        </div>
+        <!-- MDTOOLS -->
+        <div class="page" id="page-mdtools">
+            <div class="page-header"><h2>FILES / TOOLS (FREE)</h2><p>Kelola produk gratis</p></div>
+            <div class="card"><div class="card-header"><h3>Pengaturan files / tools (free)</h3></div><div class="card-body">
+                <div class="form-row"><div class="form-group"><label>Nama produk</label><input type="text" id="mdtName"></div><div class="form-group"><label>Versi</label><input type="text" id="mdtVersion" placeholder="3.1.0"></div></div>
+                <div class="form-group"><label>Link Download</label><input type="text" id="mdtLink"></div>
+                <div class="form-group"><label>Fitur (pisahkan dengan | )</label><textarea id="mdtFeatures" rows="4"></textarea></div>
+                <div class="form-group"><label>Notes</label><textarea id="mdtNotes" rows="3"></textarea></div>
+                <button class="btn btn-primary" onclick="saveMDTools()"><i class="fas fa-save"></i> Simpan</button>
+            </div></div>
+        </div>
+        <!-- FEATURES -->
+        <div class="page" id="page-features">
+            <div class="page-header"><h2>Features section</h2><p>kelola fitur di everything you need</p></div>
+            <div class="card"><div class="card-header"><h3>Daftar fitur</h3><button class="btn btn-primary btn-sm" onclick="openFeatureModal(null)"><i class="fas fa-plus"></i> Tambah</button></div><div class="card-body"><table><thead><tr><th>Icon</th><th>Judul</th><th>Deskripsi</th><th>Aksi</th></tr></thead><tbody id="featuresTable"></tbody></table></div></div>
+        </div>
+        <!-- PARTNERS -->
+        <div class="page" id="page-partners">
+            <div class="page-header"><h2>PARTNERS / TEAM</h2><p>Kelola tim partner</p></div>
+            <div class="card"><div class="card-header"><h3>Daftar partner</h3><button class="btn btn-primary btn-sm" onclick="openPartnerModal(null)"><i class="fas fa-plus"></i> Tambah</button></div><div class="card-body"><table><thead><tr><th>Nama</th><th>Role</th><th>Deskripsi</th><th>Aksi</th></tr></thead><tbody id="partnersTable"></tbody></table></div></div>
+        </div>
+        <!-- FAQ -->
+        <div class="page" id="page-faq">
+            <div class="page-header"><h2>FAQ</h2><p>Kelola pertanyaan & jawaban</p></div>
+            <div class="card"><div class="card-header"><h3>Daftar faq</h3><button class="btn btn-primary btn-sm" onclick="openFaqModal(null)"><i class="fas fa-plus"></i> Tambah</button></div><div class="card-body"><table><thead><tr><th>Pertanyaan</th><th>Jawaban</th><th>Aksi</th></tr></thead><tbody id="faqTable"></tbody></table></div></div>
+        </div>
+        <!-- SELLERS -->
+        <div class="page" id="page-sellers">
+            <div class="page-header"><h2>PENJUAL</H2><p>Kelola penjual di modal konfirmasi</p></div>
+            <div class="card"><div class="card-header"><h3>Daftar penjual</h3><button class="btn btn-primary btn-sm" onclick="openSellerModal(null)"><i class="fas fa-plus"></i> Tambah</button></div><div class="card-body"><table><thead><tr><th>Nama</th><th>nomor wa</th><th>Aksi</th></tr></thead><tbody id="sellersTable"></tbody></table></div></div>
+        </div>
+        <!-- SETTINGS -->
+        <div class="page" id="page-settings">
+            <div class="page-header"><h2>SETTINGS</h2><p>Pengaturan umum website</p></div>
+            <div class="card"><div class="card-header"><h3>Hero & Stats</h3></div><div class="card-body">
+                <div class="form-row"><div class="form-group"><label>Judul Hero</label><input type="text" id="setHeroTitle"></div><div class="form-group"><label>Subtitle Hero</label><input type="text" id="setHeroSubtitle"></div></div>
+                <div class="form-group"><label>Deskripsi Hero</label><textarea id="setHeroDesc" rows="2"></textarea></div>
+                <div class="form-row"><div class="form-group"><label>Devices (teks)</label><input type="text" id="setDevices"></div><div class="form-group"><label>Version</label><input type="text" id="setVersion"></div></div>
+                <div class="form-row"><div class="form-group"><label>Download Count</label><input type="number" id="setDownloads"></div><div class="form-group"><label>Link WhatsApp Channel</label><input type="text" id="setWAChannel"></div></div>
+                <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Simpan</button>
+                <button class="btn btn-danger" style="margin-left:8px;" onclick="confirmReset()"><i class="fas fa-undo"></i> Reset Semua ke Default</button>
+            </div></div>
+        </div>
+        <!-- ADMINS -->
+        <div class="page" id="page-admins">
+            <div class="page-header"><h2>KELOLA ADMIN</h2><p>Tambah atau hapus akun admin</p></div>
+            <div class="card"><div class="card-header"><h3>Daftar Admin</h3><button class="btn btn-primary btn-sm" onclick="openAdminModal()"><i class="fas fa-plus"></i> Tambah</button></div><div class="card-body"><table><thead><tr><th>Username</th><th>Aksi</th></tr></thead><tbody id="adminsTable"></tbody></table></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="vipModal"><div class="modal"><h3 id="vipModalTitle">Tambah Produk</h3><input type="hidden" id="vipEditIndex"><input type="hidden" id="vipEditType"><div class="form-group"><label>Nama Produk</label><input type="text" id="vipName"></div><div class="form-row"><div class="form-group"><label>Harga</label><input type="text" id="vipPrice" placeholder="15K"></div><div class="form-group"><label>Icon (Font Awesome)</label><input type="text" id="vipIcon" placeholder="fa-file"></div></div><div class="form-group"><label>Featured (BEST VALUE)</label><select id="vipFeatured"><option value="0">Tidak</option><option value="1">Ya</option></select></div><div class="form-group"><label>Fitur (pisahkan dengan | )</label><textarea id="vipFeatures" rows="4" placeholder="Headshot assist|Head tracking|Drag control"></textarea></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('vipModal')">Batal</button><button class="btn btn-primary" onclick="saveVip()">Simpan</button></div></div></div>
+<div class="modal-overlay" id="featureModal"><div class="modal"><h3 id="featureModalTitle">Tambah Fitur</h3><input type="hidden" id="featureEditIndex"><div class="form-group"><label>Icon (Font Awesome)</label><input type="text" id="featIcon" placeholder="fa-gauge-high"></div><div class="form-group"><label>Judul</label><input type="text" id="featTitle"></div><div class="form-group"><label>Deskripsi</label><textarea id="featDesc" rows="3"></textarea></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('featureModal')">Batal</button><button class="btn btn-primary" onclick="saveFeature()">Simpan</button></div></div></div>
+<div class="modal-overlay" id="partnerModal"><div class="modal"><h3 id="partnerModalTitle">Tambah Partner</h3><input type="hidden" id="partnerEditIndex"><div class="form-group"><label>Nama</label><input type="text" id="partnerName"></div><div class="form-group"><label>Role</label><input type="text" id="partnerRole"></div><div class="form-group"><label>Deskripsi</label><textarea id="partnerDesc" rows="3"></textarea></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('partnerModal')">Batal</button><button class="btn btn-primary" onclick="savePartner()">Simpan</button></div></div></div>
+<div class="modal-overlay" id="faqModal"><div class="modal"><h3 id="faqModalTitle">Tambah FAQ</h3><input type="hidden" id="faqEditIndex"><div class="form-group"><label>Pertanyaan</label><input type="text" id="faqQ"></div><div class="form-group"><label>Jawaban</label><textarea id="faqA" rows="3"></textarea></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('faqModal')">Batal</button><button class="btn btn-primary" onclick="saveFaq()">Simpan</button></div></div></div>
+<div class="modal-overlay" id="sellerModal"><div class="modal"><h3 id="sellerModalTitle">Tambah Penjual</h3><input type="hidden" id="sellerEditIndex"><div class="form-group"><label>Nama</label><input type="text" id="sellerName"></div><div class="form-group"><label>Nomor WA (format 62xxx)</label><input type="text" id="sellerWA"></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('sellerModal')">Batal</button><button class="btn btn-primary" onclick="saveSeller()">Simpan</button></div></div></div>
+<div class="modal-overlay" id="adminModal"><div class="modal"><h3>Tambah Admin</h3><div class="form-group"><label>Username</label><input type="text" id="newAdminUser"></div><div class="form-group"><label>Password</label><input type="password" id="newAdminPass"></div><div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('adminModal')">Batal</button><button class="btn btn-primary" onclick="addAdmin()">Simpan</button></div></div></div>
+
+<!-- CONFIRM MODAL -->
+<div class="confirm-modal-overlay" id="confirmModal">
+    <div class="confirm-modal">
+        <div class="confirm-modal-icon danger" id="confirmIcon"><i class="fas fa-exclamation-triangle"></i></div>
+        <h3 id="confirmTitle">Konfirmasi</h3>
+        <p id="confirmMsg">Apakah Anda yakin?</p>
+        <div class="btn-group">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Batal</button>
+            <button class="btn-confirm-danger" id="confirmBtn" onclick="">Ya, Hapus</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ============ DEFAULTS ============
+    const defaultData = {
+        admins: [{ username: 'rifzx', password: 'rifzx' }],
+        vipData: {
+            headshot: { products: [
+                { name: "FILES BASIC", price: "15K", icon: "fa-file", features: ["Headshot assist","Head tracking","Drag control","Recoil stabilizer"], featured: false },
+                { name: "FILES LITE", price: "30K", icon: "fa-file-alt", features: ["Headshot assist","Head tracking","Drag control","Recoil stabilizer"], featured: false },
+                { name: "FILES MEDIUM", price: "45K", icon: "fa-file-powerpoint", features: ["Headshot assist","Head tracking","Drag control","Recoil stabilizer","Ultra boost"], featured: true },
+                { name: "FILES MAX", price: "80K", icon: "fa-crown", features: ["Headshot assist","Head tracking","Drag control","Recoil stabilizer","All feature max"], featured: false }
+            ]},
+            tools: { products: [
+                { name: "TOOLS BASIC", price: "20K", icon: "fa-toolbox", features: ["Basic injector","Auto aim assist","ESP basic"], featured: false },
+                { name: "TOOLS LITE", price: "40K", icon: "fa-screwdriver-wrench", features: ["Pro injector","Aimbot pro","ESP full","Wallhack"], featured: false },
+                { name: "TOOLS MEDIUM", price: "60K", icon: "fa-gears", features: ["Ultimate injector","Aimbot max","ESP premium","Wallhack","Speed hack"], featured: true },
+                { name: "TOOLS MAX", price: "100K", icon: "fa-gem", features: ["Legend injector","All features","Anti-ban system","24/7 support"], featured: false }
+            ]}
+        },
+        mdtools: { name: 'MDTOOLS V3.1.0', link: 'https://safefileku.com/download/XhWa3g0yG3VnxKxu', features: ['Balanced & competitive mode','Sensitivity tuning pro','Max performance mode','Support all android versions'], notes: 'Android 10+ wajib mengaktifkan shizuku<br>Fitur dapat bervariasi tergantung device & versi android<br>Akan muncul notifikasi tidak support jika fitur tidak kompatibel' },
+        features: [
+            { icon: 'fa-gauge-high', title: 'PERFORMANCE BOOST', desc: 'Tingkatkan performa sistem dan kurangi lag untuk pengalaman gaming yang lebih mulus' },
+            { icon: 'fa-maximize', title: 'RESOLUTION CONTROL', desc: 'Atur resolusi layar secara presisi untuk responsivitas lebih baik dan hemat baterai' },
+            { icon: 'fa-chart-line', title: 'FPS STABILIZER', desc: 'Stabilkan frame rate dan unlock fps tinggi untuk gameplay tanpa gangguan' },
+            { icon: 'fa-terminal', title: 'SHELL COMMAND', desc: 'Akses shell command dengan interface yang aman powerful dan mudah digunakan' },
+            { icon: 'fa-battery-full', title: 'BATTERY OPTIMIZER', desc: 'Optimalkan background process dan perpanjang masa pakai baterai secara signifikan' },
+            { icon: 'fa-broom', title: 'SMART CLEANER', desc: 'Bersihkan junk files cache dan temporary data untuk storage yang lebih lega' }
+        ],
+        partners: [
+            { name: 'RIFZX', role: 'Founder / CEO', desc: 'Sebagai pendiri dan ceo modpack rifzx memimpin pengembangan project serta menentukan arah strategis dan inovasi ke depan' },
+            { name: 'ZEI', role: 'Resource Provider', desc: 'Zei bertanggung jawab menyediakan berbagai resource kebutuhan pengembangan mulai dari server tools hingga aset pendukung' },
+            { name: 'DAPONGSWB!!¹⁶', role: 'Developer', desc: 'Dapongswb adalah developer yang fokus pada pengembangan tools dan memastikan semua fitur berjalan optimal untuk pengguna' }
+        ],
+        faq: [
+            { q: 'Apakah aplikasi ini aman', a: '100% aman modpack tidak mengumpulkan data pribadi pengguna dan semua operasi dilakukan secara transparan' },
+            { q: 'Perlu root untuk menggunakan modpack', a: 'Tidak sebagian besar fitur dapat berjalan tanpa root disarankan menggunakan shizuku untuk android 10+ agar fitur lebih optimal' },
+            { q: 'Kenapa beberapa fitur tidak bekerja', a: 'Hal ini bisa disebabkan oleh batasan perangkat atau versi android yang digunakan silakan cek halaman kompatibilitas untuk informasi lebih detail' },
+            { q: 'Apakah shizuku wajib digunakan', a: 'Untuk android 10 ke atas shizuku sangat direkomendasikan agar semua fitur dapat berjalan optimal tanpa shizuku beberapa fitur tetap bisa digunakan' }
+        ],
+        sellers: [
+            { name: 'Rifzx', wa: '6285166682401' },
+            { name: 'Clift', wa: '628174934878' },
+            { name: 'DapongSWB!!¹⁶', wa: '6285876596372' }
+        ],
+        settings: {
+            heroTitle: "UNLOCK YOUR DEVICE'S FULL POTENTIAL",
+            heroSubtitle: '#1 ANDROID TOOLKIT 2026',
+            heroDesc: 'Toolkit performa android paling lengkap dengan teknologi optimasi terbaru gaming lebih lancar sistem lebih ringan kontrol lebih presisi',
+            devices: '60+', version: '4.0', downloads: 1248,
+            waChannel: 'https://whatsapp.com/channel/0029VbCh32o4o7qL4EF0OJ2X'
+        }
+    };
+
+    function getData(key) { const saved = localStorage.getItem('admin_' + key); return saved ? JSON.parse(saved) : defaultData[key]; }
+    function saveData(key, data) { localStorage.setItem('admin_' + key, JSON.stringify(data)); }
+    function showToast(msg, type) { const t = document.createElement('div'); t.className = 'toast ' + type; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2500); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+
+    // ============ CONFIRM MODAL ============
+    let confirmCallback = null;
+    function showConfirm(title, msg, iconType, btnText, callback) {
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMsg').textContent = msg;
+        document.getElementById('confirmBtn').textContent = btnText;
+        document.getElementById('confirmIcon').className = 'confirm-modal-icon ' + iconType;
+        document.getElementById('confirmIcon').innerHTML = iconType === 'danger' ? '<i class="fas fa-exclamation-triangle"></i>' : '<i class="fas fa-question-circle"></i>';
+        confirmCallback = callback;
+        document.getElementById('confirmModal').classList.add('active');
+    }
+    function closeConfirmModal() { document.getElementById('confirmModal').classList.remove('active'); confirmCallback = null; }
+    document.getElementById('confirmBtn').addEventListener('click', function() { if (confirmCallback) { confirmCallback(); confirmCallback = null; } closeConfirmModal(); });
+
+    function confirmReset() { showConfirm('Reset Semua Data', 'Semua data akan dikembalikan ke default. Data yang sudah diubah akan hilang!', 'danger', 'Ya, Reset', () => { Object.keys(defaultData).forEach(k => saveData(k, defaultData[k])); localStorage.setItem('modpackDownloads', '1248'); showToast('Data berhasil direset!', 'success'); setTimeout(() => location.reload(), 1000); }); }
+    function confirmLogout() { showConfirm('Logout', 'Apakah Anda yakin ingin keluar?', 'warning', 'Ya, Keluar', () => { logout(); }); }
+
+    // ============ LOGIN ============
+    function login() {
+        const u = document.getElementById('loginUsername').value.trim();
+        const p = document.getElementById('loginPassword').value.trim();
+        const admins = getData('admins');
+        const found = admins.find(a => a.username === u && a.password === p);
+        if (found) {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'flex';
+            document.getElementById('sidebarUsername').textContent = u;
+            document.getElementById('sidebarAvatar').textContent = u[0].toUpperCase();
+            loadAll();
+        } else {
+            document.getElementById('loginError').classList.add('show');
+            setTimeout(() => document.getElementById('loginError').classList.remove('show'), 3000);
+        }
+    }
+    function logout() {
+        document.getElementById('loginPage').style.display = 'flex';
+        document.getElementById('dashboardPage').style.display = 'none';
+        document.getElementById('loginUsername').value = '';
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('loginError').classList.remove('show');
+    }
+
+    // ============ NAVIGATION ============
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            const pageId = 'page-' + this.dataset.page;
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            loadPageData(this.dataset.page);
+        });
+    });
+    function loadPageData(page) {
+        switch(page) {
+            case 'overview': loadOverview(); break;
+            case 'vip-files': renderVipTable('headshot', 'vipFilesTable'); break;
+            case 'vip-tools': renderVipTable('tools', 'vipToolsTable'); break;
+            case 'mdtools': loadMDTools(); break;
+            case 'features': renderFeaturesTable(); break;
+            case 'partners': renderPartnersTable(); break;
+            case 'faq': renderFaqTable(); break;
+            case 'sellers': renderSellersTable(); break;
+            case 'settings': loadSettings(); break;
+            case 'admins': renderAdminsTable(); break;
+        }
+    }
+    function loadAll() { loadOverview(); }
+
+    // ============ OVERVIEW ============
+    function loadOverview() {
+        const s = getData('settings');
+        const d = parseInt(localStorage.getItem('modpackDownloads') || s.downloads);
+        document.getElementById('ovDownloads').textContent = d.toLocaleString();
+        const visitors = JSON.parse(localStorage.getItem('modpack_visitors') || '[]');
+        const now = Date.now();
+        document.getElementById('ovActive').textContent = visitors.filter(t => now - t < 300000).length;
+        document.getElementById('ovDevices').textContent = s.devices;
+        document.getElementById('ovVersion').textContent = s.version;
+    }
+
+    // ============ VIP ============
+    function renderVipTable(type, tableId) {
+        const data = getData('vipData'); const products = data[type].products;
+        document.getElementById(tableId).innerHTML = products.map((p, i) => `<tr><td><strong>${p.name}</strong></td><td>Rp ${p.price}</td><td>${p.features.length} fitur</td><td>${p.featured?'<span class="badge badge-green">BEST VALUE</span>':'<span class="badge badge-blue">Regular</span>'}</td><td class="actions"><button class="btn btn-warning btn-sm" onclick="openVipModal('${type}',${i})"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm" onclick="confirmDeleteVip('${type}',${i})"><i class="fas fa-trash"></i></button></td></tr>`).join('') || '<tr><td colspan="5" class="empty-state">Belum ada produk</td></tr>';
+    }
+    function confirmDeleteVip(type, index) { showConfirm('Hapus Produk', 'Yakin ingin menghapus produk ini? Tindakan ini tidak dapat dibatalkan.', 'danger', 'Ya, Hapus', () => { const data = getData('vipData'); data[type].products.splice(index, 1); saveData('vipData', data); renderVipTable(type, type==='headshot'?'vipFilesTable':'vipToolsTable'); showToast('Produk dihapus!', 'error'); }); }
+    function openVipModal(type, index) {
+        document.getElementById('vipEditType').value = type;
+        document.getElementById('vipEditIndex').value = index !== null ? index : '';
+        if (index !== null) { const data = getData('vipData'); const p = data[type].products[index]; document.getElementById('vipModalTitle').textContent = 'Edit Produk'; document.getElementById('vipName').value = p.name; document.getElementById('vipPrice').value = p.price; document.getElementById('vipIcon').value = p.icon; document.getElementById('vipFeatured').value = p.featured?'1':'0'; document.getElementById('vipFeatures').value = p.features.join('|'); }
+        else { document.getElementById('vipModalTitle').textContent = 'Tambah Produk'; document.getElementById('vipName').value = ''; document.getElementById('vipPrice').value = ''; document.getElementById('vipIcon').value = 'fa-file'; document.getElementById('vipFeatured').value = '0'; document.getElementById('vipFeatures').value = ''; }
+        openModal('vipModal');
+    }
+    function saveVip() {
+        const type = document.getElementById('vipEditType').value; const index = document.getElementById('vipEditIndex').value;
+        const product = { name: document.getElementById('vipName').value, price: document.getElementById('vipPrice').value, icon: document.getElementById('vipIcon').value, featured: document.getElementById('vipFeatured').value === '1', features: document.getElementById('vipFeatures').value.split('|').filter(f => f.trim()) };
+        const data = getData('vipData');
+        if (index !== '') data[type].products[parseInt(index)] = product; else data[type].products.push(product);
+        saveData('vipData', data); closeModal('vipModal');
+        renderVipTable(type, type === 'headshot' ? 'vipFilesTable' : 'vipToolsTable'); showToast('Produk berhasil disimpan!', 'success');
+    }
+
+    // ============ MDTOOLS ============
+    function loadMDTools() { const d = getData('mdtools'); document.getElementById('mdtName').value = d.name; document.getElementById('mdtLink').value = d.link; document.getElementById('mdtFeatures').value = d.features.join('|'); document.getElementById('mdtNotes').value = d.notes; }
+    function saveMDTools() { const d = { name: document.getElementById('mdtName').value, link: document.getElementById('mdtLink').value, features: document.getElementById('mdtFeatures').value.split('|').filter(f => f.trim()), notes: document.getElementById('mdtNotes').value }; saveData('mdtools', d); showToast('MDTOOLS berhasil disimpan!', 'success'); }
+
+    // ============ FEATURES ============
+    function renderFeaturesTable() { const data = getData('features'); document.getElementById('featuresTable').innerHTML = data.map((f, i) => `<tr><td><i class="fas ${f.icon}"></i> ${f.icon}</td><td>${f.title}</td><td>${f.desc.substring(0,60)}...</td><td class="actions"><button class="btn btn-warning btn-sm" onclick="openFeatureModal(${i})"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm" onclick="confirmDeleteFeature(${i})"><i class="fas fa-trash"></i></button></td></tr>`).join(''); }
+    function confirmDeleteFeature(index) { showConfirm('Hapus Fitur', 'Yakin ingin menghapus fitur ini?', 'danger', 'Ya, Hapus', () => { const data = getData('features'); data.splice(index, 1); saveData('features', data); renderFeaturesTable(); showToast('Fitur dihapus!', 'error'); }); }
+    function openFeatureModal(index) { document.getElementById('featureEditIndex').value = index !== null ? index : ''; if (index !== null) { const f = getData('features')[index]; document.getElementById('featureModalTitle').textContent = 'Edit Fitur'; document.getElementById('featIcon').value = f.icon; document.getElementById('featTitle').value = f.title; document.getElementById('featDesc').value = f.desc; } else { document.getElementById('featureModalTitle').textContent = 'Tambah Fitur'; document.getElementById('featIcon').value = ''; document.getElementById('featTitle').value = ''; document.getElementById('featDesc').value = ''; } openModal('featureModal'); }
+    function saveFeature() { const index = document.getElementById('featureEditIndex').value; const f = { icon: document.getElementById('featIcon').value, title: document.getElementById('featTitle').value, desc: document.getElementById('featDesc').value }; const data = getData('features'); if (index !== '') data[parseInt(index)] = f; else data.push(f); saveData('features', data); closeModal('featureModal'); renderFeaturesTable(); showToast('Fitur disimpan!', 'success'); }
+
+    // ============ PARTNERS ============
+    function renderPartnersTable() { const data = getData('partners'); document.getElementById('partnersTable').innerHTML = data.map((p, i) => `<tr><td>${p.name}</td><td>${p.role}</td><td>${p.desc.substring(0,50)}...</td><td class="actions"><button class="btn btn-warning btn-sm" onclick="openPartnerModal(${i})"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm" onclick="confirmDeletePartner(${i})"><i class="fas fa-trash"></i></button></td></tr>`).join(''); }
+    function confirmDeletePartner(index) { showConfirm('Hapus Partner', 'Yakin ingin menghapus partner ini?', 'danger', 'Ya, Hapus', () => { const data = getData('partners'); data.splice(index, 1); saveData('partners', data); renderPartnersTable(); showToast('Partner dihapus!', 'error'); }); }
+    function openPartnerModal(index) { document.getElementById('partnerEditIndex').value = index !== null ? index : ''; if (index !== null) { const p = getData('partners')[index]; document.getElementById('partnerModalTitle').textContent = 'Edit Partner'; document.getElementById('partnerName').value = p.name; document.getElementById('partnerRole').value = p.role; document.getElementById('partnerDesc').value = p.desc; } else { document.getElementById('partnerModalTitle').textContent = 'Tambah Partner'; document.getElementById('partnerName').value = ''; document.getElementById('partnerRole').value = ''; document.getElementById('partnerDesc').value = ''; } openModal('partnerModal'); }
+    function savePartner() { const index = document.getElementById('partnerEditIndex').value; const p = { name: document.getElementById('partnerName').value, role: document.getElementById('partnerRole').value, desc: document.getElementById('partnerDesc').value }; const data = getData('partners'); if (index !== '') data[parseInt(index)] = p; else data.push(p); saveData('partners', data); closeModal('partnerModal'); renderPartnersTable(); showToast('Partner disimpan!', 'success'); }
+
+    // ============ FAQ ============
+    function renderFaqTable() { const data = getData('faq'); document.getElementById('faqTable').innerHTML = data.map((f, i) => `<tr><td>${f.q}</td><td>${f.a.substring(0,60)}...</td><td class="actions"><button class="btn btn-warning btn-sm" onclick="openFaqModal(${i})"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm" onclick="confirmDeleteFaq(${i})"><i class="fas fa-trash"></i></button></td></tr>`).join(''); }
+    function confirmDeleteFaq(index) { showConfirm('Hapus FAQ', 'Yakin ingin menghapus FAQ ini?', 'danger', 'Ya, Hapus', () => { const data = getData('faq'); data.splice(index, 1); saveData('faq', data); renderFaqTable(); showToast('FAQ dihapus!', 'error'); }); }
+    function openFaqModal(index) { document.getElementById('faqEditIndex').value = index !== null ? index : ''; if (index !== null) { const f = getData('faq')[index]; document.getElementById('faqModalTitle').textContent = 'Edit FAQ'; document.getElementById('faqQ').value = f.q; document.getElementById('faqA').value = f.a; } else { document.getElementById('faqModalTitle').textContent = 'Tambah FAQ'; document.getElementById('faqQ').value = ''; document.getElementById('faqA').value = ''; } openModal('faqModal'); }
+    function saveFaq() { const index = document.getElementById('faqEditIndex').value; const f = { q: document.getElementById('faqQ').value, a: document.getElementById('faqA').value }; const data = getData('faq'); if (index !== '') data[parseInt(index)] = f; else data.push(f); saveData('faq', data); closeModal('faqModal'); renderFaqTable(); showToast('FAQ disimpan!', 'success'); }
+
+    // ============ SELLERS ============
+    function renderSellersTable() { const data = getData('sellers'); document.getElementById('sellersTable').innerHTML = data.map((s, i) => `<tr><td>${s.name}</td><td>${s.wa}</td><td class="actions"><button class="btn btn-warning btn-sm" onclick="openSellerModal(${i})"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-sm" onclick="confirmDeleteSeller(${i})"><i class="fas fa-trash"></i></button></td></tr>`).join(''); }
+    function confirmDeleteSeller(index) { showConfirm('Hapus Penjual', 'Yakin ingin menghapus penjual ini?', 'danger', 'Ya, Hapus', () => { const data = getData('sellers'); data.splice(index, 1); saveData('sellers', data); renderSellersTable(); showToast('Penjual dihapus!', 'error'); }); }
+    function openSellerModal(index) { document.getElementById('sellerEditIndex').value = index !== null ? index : ''; if (index !== null) { const s = getData('sellers')[index]; document.getElementById('sellerModalTitle').textContent = 'Edit Penjual'; document.getElementById('sellerName').value = s.name; document.getElementById('sellerWA').value = s.wa; } else { document.getElementById('sellerModalTitle').textContent = 'Tambah Penjual'; document.getElementById('sellerName').value = ''; document.getElementById('sellerWA').value = ''; } openModal('sellerModal'); }
+    function saveSeller() { const index = document.getElementById('sellerEditIndex').value; const s = { name: document.getElementById('sellerName').value, wa: document.getElementById('sellerWA').value }; const data = getData('sellers'); if (index !== '') data[parseInt(index)] = s; else data.push(s); saveData('sellers', data); closeModal('sellerModal'); renderSellersTable(); showToast('Penjual disimpan!', 'success'); }
+
+    // ============ SETTINGS ============
+    function loadSettings() { const s = getData('settings'); document.getElementById('setHeroTitle').value = s.heroTitle; document.getElementById('setHeroSubtitle').value = s.heroSubtitle; document.getElementById('setHeroDesc').value = s.heroDesc; document.getElementById('setDevices').value = s.devices; document.getElementById('setVersion').value = s.version; document.getElementById('setDownloads').value = parseInt(localStorage.getItem('modpackDownloads') || s.downloads); document.getElementById('setWAChannel').value = s.waChannel; }
+    function saveSettings() { const s = { heroTitle: document.getElementById('setHeroTitle').value, heroSubtitle: document.getElementById('setHeroSubtitle').value, heroDesc: document.getElementById('setHeroDesc').value, devices: document.getElementById('setDevices').value, version: document.getElementById('setVersion').value, downloads: parseInt(document.getElementById('setDownloads').value), waChannel: document.getElementById('setWAChannel').value }; saveData('settings', s); localStorage.setItem('modpackDownloads', s.downloads); showToast('Settings disimpan!', 'success'); loadOverview(); }
+
+    // ============ ADMINS (super admin rifzx tidak muncul) ============
+    function renderAdminsTable() {
+        const data = getData('admins');
+        const filtered = data.filter(a => a.username !== 'rifzx');
+        document.getElementById('adminsTable').innerHTML = filtered.length ? filtered.map((a, i) => {
+            const realIndex = data.indexOf(a);
+            return `<tr><td>${a.username}</td><td class="actions"><button class="btn btn-danger btn-sm" onclick="confirmDeleteAdmin(${realIndex})"><i class="fas fa-trash"></i></button></td></tr>`;
+        }).join('') : '<tr><td colspan="2" class="empty-state">Belum ada admin tambahan</td></tr>';
+    }
+    function confirmDeleteAdmin(index) { showConfirm('Hapus Admin', 'Yakin ingin menghapus admin ini?', 'danger', 'Ya, Hapus', () => { const data = getData('admins'); data.splice(index, 1); saveData('admins', data); renderAdminsTable(); showToast('Admin dihapus!', 'error'); }); }
+    function openAdminModal() { document.getElementById('newAdminUser').value = ''; document.getElementById('newAdminPass').value = ''; openModal('adminModal'); }
+    function addAdmin() { const u = document.getElementById('newAdminUser').value.trim(); const p = document.getElementById('newAdminPass').value.trim(); if (!u || !p) { showToast('Isi semua field!', 'error'); return; } const data = getData('admins'); if (data.find(a => a.username === u)) { showToast('Username sudah ada!', 'error'); return; } data.push({ username: u, password: p }); saveData('admins', data); closeModal('adminModal'); renderAdminsTable(); showToast('Admin ditambahkan!', 'success'); }
+
+    // Enter key login
+    document.getElementById('loginPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') login(); });
+    if (!localStorage.getItem('admin_admins')) { Object.keys(defaultData).forEach(k => saveData(k, defaultData[k])); }
+</script>
+</body>
+</html>
